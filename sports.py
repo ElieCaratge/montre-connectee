@@ -4,6 +4,9 @@ class Sport:
         self.id=id
         self.name = name
         self.MET = MET
+    
+    def __repr__(self) -> str:
+        return f"Sport({self.name})"
 
 SPORTS = {
     "badminton" : Sport("badminton", "Badminton", 4.5),
@@ -18,3 +21,7 @@ SPORTS = {
     "volleyball" : Sport("volleyball", "Volley-ball", 4),
     "marche" : Sport("marche", "Marche", 3.3)
 }
+
+SPORTS_LIST = list(SPORTS.values())
+
+N_SPORTS = len(SPORTS_LIST)
