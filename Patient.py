@@ -1,6 +1,6 @@
 import numpy as np
 import datetime
-from sports import SPORTS_LIST, N_SPORTS
+from Sport import SPORTS_LIST, N_SPORTS
 
 class Patient:
 
@@ -28,20 +28,21 @@ class Patient:
     
     def evaluate(self):
         # Paramters to adjust
-        ALPHA, BETA = 0, 0
-        h_eq = self.process_activity()
+        ALPHA, BETA = 70, 0.1
+        min_eq = self.process_activity().total_seconds()//60
         m_BPM = self.process_BPM()
-        return ALPHA*m_BPM + BETA*h_eq # Sould be between 0 and 10
+        return ALPHA/m_BPM + BETA*min_eq # Sould be between 0 and 10
 
     def process_activity(self):
         """Return the number of equivalent hours of sport"""
-        return 0
+        sum=datetime.timedelta()
+        for sport, date, duration in self.practice:
+            sum += sport.equiv_hours(duration)
+        return sum
 
     def process_BPM(self):
         """Return the mean of the BPM"""
         return np.mean(self.BPM)
 
 myPatient = Patient.generate_random_patient()
-print(myPatient)
-print(myPatient.BPM)
-print(myPatient.practice)
+print(myPatient.evaluation)
