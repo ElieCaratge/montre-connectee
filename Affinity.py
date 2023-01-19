@@ -40,10 +40,4 @@ for j in range(len(sports)):
 affinity_zero = affinités
 
 
-def feedback(pos, i, j, mat=affinity_zero):
-    """Is the feedback from sport i to sport j posiive (pos = True) or negative (pos = False)"""
-    if pos:
-        mat[i][j] += (25/10)*np.sqrt(100-mat[i][j])
-    else:
-        mat[i][j] += (25/10)*np.sqrt(mat[i][j])
-    return mat
+

@@ -50,7 +50,17 @@ class CompatibilityMatrix(pd.DataFrame):
         super().__init__(B)
 
     def positive_feedback(self, sport1, sport2):
-        pass
+        i = SPORTS_LIST.index(sport1)
+        j = SPORTS_LIST.index(sport2)
+        self.iloc[i,j] += (25/10)*np.sqrt(100-self.iloc[i,j])
 
     def negative_feedback(self, sport1, sport2):
-        pass
+        i = SPORTS_LIST.index(sport1)
+        j = SPORTS_LIST.index(sport2)
+        self.iloc[i,j] += (25/10)*np.sqrt(self.iloc[i,j])
+
+
+COMPATIBILITY_MATRIX = CompatibilityMatrix()
+
+
+COMPATIBILITY_MATRIX.positive_feedback(SPORTS['escalade'], SPORTS['cyclisme'])
