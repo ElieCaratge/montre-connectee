@@ -4,6 +4,7 @@ from Sport import SPORTS_LIST, N_SPORTS, Sport
 from CompatibilityMatrix import CompatibilityMatrix
 from attribution_sport import fct_principale
 
+
 class Patient:
 
     NOOB_THRESHOLD = 3
@@ -12,7 +13,7 @@ class Patient:
     @classmethod
     def generate_random_patient(cls, freq=3, nb_seances=8, min_min=30, min_max=60):
         """Générer un patient aléatoire.
-        
+
         Paramètres
         ----------
         - freq (int) : Nombre de jours espacant chaque pratique sportive.
@@ -26,12 +27,12 @@ class Patient:
         practice = [
             (SPORTS_LIST[np.random.randint(N_SPORTS)], today-datetime.timedelta(freq*i), datetime.timedelta(minutes=np.random.randint(min_min, min_max))) for i in range(nb_seances)
         ]
-        
+
         return Patient(BPM, practice)
 
-    def __init__(self, BPM, practice, liked_sports = dict()) -> None:
+    def __init__(self, BPM, practice, liked_sports=dict()) -> None:
         """Initialisation d'un patient.
-        
+
         Paramètres
         ----------
         - BPM (np.array) : Rythme cardiaque du patient.
@@ -51,7 +52,7 @@ class Patient:
         
     def __repr__(self) -> str:
         return f"Patient({self.category})"
-    
+
     def evaluate(self):
         """Évaluation de l'activité sportive du patient (note sur 10)"""
 
@@ -66,7 +67,7 @@ class Patient:
     def process_activity(self):
         """Nombre d'heures équivalentes de sport par semaine."""
 
-        sum=datetime.timedelta()
+        sum = datetime.timedelta()
         first_activity = self.practice[0][1]
 
         for sport, date, duration in self.practice:
@@ -80,7 +81,7 @@ class Patient:
         """Rythme cardiaque moyen"""
 
         return np.mean(self.BPM)
-    
+
     def find_main_sport(self):
         """Sport principal du patient."""
 
@@ -124,9 +125,8 @@ class Patient:
 
     def new_recommendations(self):
         """Génère une liste de recommandations pour le patient."""
-        
-        return fct_principale(self.compatibility_matrix.to_numpy(), SPORTS_LIST.index(self.main_sport))
 
+        return fct_principale(self.compatibility_matrix.to_numpy(), SPORTS_LIST.index(self.main_sport))
 
 
 myPatient = Patient.generate_random_patient()

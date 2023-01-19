@@ -3,13 +3,14 @@ import numpy as np
 import csv
 from Sport import SPORTS_LIST, SPORTS
 
+
 class CompatibilityMatrix(pd.DataFrame):
 
     def __init__(self) -> None:
 
         reponses = []
 
-        # Read the csv file, mine is called reponses.csv
+        # Read the csv file Questionnaire.csv
         with open('./Data/Questionnaire.csv', newline='') as csvfile:
             reponse = csv.reader(csvfile)
             for row in reponse:
@@ -61,9 +62,6 @@ class CompatibilityMatrix(pd.DataFrame):
         i = SPORTS_LIST.index(sport1)
         j = SPORTS_LIST.index(sport2)
         self.iloc[i, j] += (25/10)*np.sqrt(self.iloc[i, j])
-
-    
-
 
 
 COMPATIBILITY_MATRIX = CompatibilityMatrix()
