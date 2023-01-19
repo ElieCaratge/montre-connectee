@@ -2,8 +2,6 @@ import pandas as pd
 import numpy as np
 import csv
 from Sport import SPORTS_LIST, SPORTS
-from Patient import Patient
-
 
 class CompatibilityMatrix(pd.DataFrame):
 
@@ -65,6 +63,7 @@ class CompatibilityMatrix(pd.DataFrame):
         self.iloc[i, j] += (25/10)*np.sqrt(self.iloc[i, j])
 
     
+
 
 
 COMPATIBILITY_MATRIX = CompatibilityMatrix()

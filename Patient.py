@@ -2,6 +2,7 @@ import numpy as np
 import datetime
 from Sport import SPORTS_LIST, N_SPORTS
 from CompatibilityMatrix import CompatibilityMatrix
+from attribution_sport import fct_principale
 
 class Patient:
 
@@ -92,11 +93,10 @@ class Patient:
 
     def new_recommendations(self):
         """Génère une liste de recommandations pour le patient."""
-
-        # TODO : Implémenter la fonction de recommandation
-        return None
+        
+        return fct_principale(self.compatibility_matrix.to_numpy(), SPORTS_LIST.index(self.main_sport))
 
 
 
 myPatient = Patient.generate_random_patient()
-print(myPatient.main_sport)
+print(myPatient.next_recommendation)
