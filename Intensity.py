@@ -1,6 +1,6 @@
 from Patient import Patient
 from Sport import SPORTS_LIST, SPORTS
-from Patient import Patient
+
 
 
 def compute_intensity(sport, sportivity=Patient.category):

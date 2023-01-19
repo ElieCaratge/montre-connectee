@@ -1,6 +1,6 @@
 import numpy as np
 import datetime
-from Sport import SPORTS_LIST, N_SPORTS
+from Sport import SPORTS_LIST, N_SPORTS, Sport
 from CompatibilityMatrix import CompatibilityMatrix
 from attribution_sport import fct_principale
 
@@ -47,7 +47,8 @@ class Patient:
             else "intermediate" if self.evaluation < Patient.EXPERT_THRESHOLD else "expert"
         self.compatibility_matrix = CompatibilityMatrix()
         self.next_recommendation = self.new_recommendations()
-
+        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=None)
+        
     def __repr__(self) -> str:
         return f"Patient({self.category})"
     
@@ -90,6 +91,36 @@ class Patient:
             practiced_sports[SPORTS_LIST.index(sport)] += 1
         # Trouver le sport le plus pratiqué
         return SPORTS_LIST[np.argmax(practiced_sports)]
+    
+    def hard_intensity_feedback(self):
+        category = self.recomendation[2]
+        if category == "expert":
+            new_category = "intermediate"
+        else:
+            new_category = "beginner"
+        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=new_category)
+
+    def easy_intensity_feedback(self):
+        category = self.recomendation[2]
+        if category == "beginner":
+            new_category = "intermediate"
+        else:
+            new_category = "expert"
+        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=new_category)
+
+    def do_sport(self):
+        """Appelé quand le patient fait un sport"""
+        sport, intensity, category = self.recomendation
+        # Ajout de la pratique à l'historique
+        self.practice.append((sport, datetime.datetime.now(), intensity))
+        # Mise à jour de la condition physique du patient
+        self.category = self.evaluate()
+        # Mise à jour des coefficients de recommendation
+        self.compatibility_matrix.positive_feedback(self.main_sport, sport)
+        # Mise à jour du sport principal
+        self.main_sport = self.find_main_sport()
+        # Nouvelles recommendations
+        self.next_recommendation = self.new_recommendations()
 
     def new_recommendations(self):
         """Génère une liste de recommandations pour le patient."""
