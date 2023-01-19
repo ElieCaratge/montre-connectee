@@ -59,6 +59,14 @@ class CompatibilityMatrix(pd.DataFrame):
         j = SPORTS_LIST.index(sport2)
         self.iloc[i,j] += (25/10)*np.sqrt(self.iloc[i,j])
 
+    def compute_intensity(sport,sportivity) :
+        '''Sportivity : Beginner = 600 MET.min/semaine / Intermediate = 1500 MET.min/semaine / Expert = 3000 MET.min/semaine'''
+        '''On suppose en moyenne un jour sur deux de sports'''
+        '''sport : int'''
+        delta_t = sportivity/SPORTS_LIST[sport].MET
+        return delta_t
+
+
 
 COMPATIBILITY_MATRIX = CompatibilityMatrix()
 
