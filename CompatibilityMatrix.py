@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import csv
 from Sport import SPORTS_LIST, SPORTS
+from Patient import Patient
 
 class CompatibilityMatrix(pd.DataFrame):
 
@@ -10,7 +11,7 @@ class CompatibilityMatrix(pd.DataFrame):
         reponses = []
 
         # Read the csv file, mine is called reponses.csv
-        with open('questionnaire.csv', newline='') as csvfile:
+        with open('./Data/Questionnaire.csv', newline='') as csvfile:
             reponse = csv.reader(csvfile)
             for row in reponse:
                 # row[0] is a row with the date, we don't need it
@@ -59,6 +60,19 @@ class CompatibilityMatrix(pd.DataFrame):
         j = SPORTS_LIST.index(sport2)
         self.iloc[i,j] += (25/10)*np.sqrt(self.iloc[i,j])
 
+    def compute_intensity(sport,sportivity = Patient.category) :
+        '''Sportivity : Beginner = 600 MET.min/semaine / Intermediate = 1500 MET.min/semaine / Expert = 3000 MET.min/semaine'''
+        '''On suppose en moyenne 3j sport/semaine'''
+        '''sport : int'''
+        if Patient.category == "beginner" :
+            sportivity = 200
+        elif Patient.category == "intermediate" :
+            sportivity = 500
+        else :
+            sportivity = 1000
+        delta_t = sportivity/SPORTS_LIST[sport].MET
+        return delta_t
+    
 
 COMPATIBILITY_MATRIX = CompatibilityMatrix()
 
