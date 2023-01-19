@@ -1,9 +1,9 @@
 from Patient import Patient
 from Sport import SPORTS_LIST, SPORTS
-from Patient import Patient
+from Patient import patient
 
 
-def compute_intensity(sport, sportivity=Patient.category):
+def compute_intensity(sport, sportivity=patient.category):
     '''Sportivity : Beginner = 600 MET.min/semaine / Intermediate = 1500 MET.min/semaine / Expert = 3000 MET.min/semaine'''
     '''On suppose en moyenne 3j sport/semaine'''
     '''sport : int'''
