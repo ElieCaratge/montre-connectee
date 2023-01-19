@@ -8,9 +8,9 @@ def initialisation_probas(matrice_sports, sport_initial):
     array_probas = np.array([])
     nb_sports = np.shape(matrice_sports)[0]
     for i in range(nb_sports):
-        if i != (sport_initial-1):
+        if i != (sport_initial):
             array_probas = np.append(
-                array_probas, matrice_sports[sport_initial-1][i])
+                array_probas, matrice_sports[sport_initial][i])
     array_probas = np.cumsum(array_probas)/array_probas.sum()
     return(array_probas)
 
@@ -20,13 +20,12 @@ def attribution_sport(array_probas, liste_sports_restants):
     i = 0
     while array_probas[i] < x:
         i += 1
-    return(i, liste_sports_restants[i-1])
+    return(i, liste_sports_restants[i])
 
 
 def modification_liste_sports(array_probas, sport_choisi, rang_sport_choisi, liste_sports_restants, sports_deja_choisis):
     sports_deja_choisis.append(sport_choisi)
-    liste_sports_restants = np.delete(
-        liste_sports_restants, rang_sport_choisi-1)
+    liste_sports_restants = np.delete(liste_sports_restants, rang_sport_choisi)
     for i in range(rang_sport_choisi, len(array_probas)):
         proba_enlevee = array_probas[rang_sport_choisi +
                                      1] - array_probas[rang_sport_choisi]
@@ -39,7 +38,7 @@ def modification_liste_sports(array_probas, sport_choisi, rang_sport_choisi, lis
 def fct_principale(matrice_sports, sport_initial):
     nb_sports = np.shape(matrice_sports)[0]
     sports_deja_choisis = []
-    liste_sports_restants = np.array([i for i in range(1, nb_sports+1)])
+    liste_sports_restants = np.array([i for i in range(0, nb_sports)])
     liste_sports_restants = np.delete(liste_sports_restants, sport_initial)
     array_probas = initialisation_probas(matrice_sports, sport_initial)
     (rang_sport_choisi, sport_choisi) = attribution_sport(
@@ -49,5 +48,6 @@ def fct_principale(matrice_sports, sport_initial):
             array_probas, sport_choisi, rang_sport_choisi, liste_sports_restants, sports_deja_choisis)
         (rang_sport_choisi, sport_choisi) = attribution_sport(
             array_probas, liste_sports_restants)
+        print(sports_deja_choisis, liste_sports_restants)
     sports_deja_choisis.append(sport_choisi)
     return(sports_deja_choisis)
