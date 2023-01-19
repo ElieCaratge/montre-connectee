@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import csv
 from Sport import SPORTS_LIST, SPORTS
-from Patient import Patient
 
 class CompatibilityMatrix(pd.DataFrame):
 
@@ -60,13 +59,13 @@ class CompatibilityMatrix(pd.DataFrame):
         j = SPORTS_LIST.index(sport2)
         self.iloc[i,j] += (25/10)*np.sqrt(self.iloc[i,j])
 
-    def compute_intensity(sport,sportivity = Patient.category) :
+    def compute_intensity(sport,category) :
         '''Sportivity : Beginner = 600 MET.min/semaine / Intermediate = 1500 MET.min/semaine / Expert = 3000 MET.min/semaine'''
         '''On suppose en moyenne 3j sport/semaine'''
         '''sport : int'''
-        if Patient.category == "beginner" :
+        if category == "beginner" :
             sportivity = 200
-        elif Patient.category == "intermediate" :
+        elif category == "intermediate" :
             sportivity = 500
         else :
             sportivity = 1000
