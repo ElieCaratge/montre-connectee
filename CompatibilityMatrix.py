@@ -10,7 +10,7 @@ class CompatibilityMatrix(pd.DataFrame):
         reponses = []
 
         # Read the csv file, mine is called reponses.csv
-        with open('questionnaire.csv', newline='') as csvfile:
+        with open('./Data/Questionnaire.csv', newline='') as csvfile:
             reponse = csv.reader(csvfile)
             for row in reponse:
                 # row[0] is a row with the date, we don't need it
@@ -54,10 +54,3 @@ class CompatibilityMatrix(pd.DataFrame):
 
     def negative_feedback(self, sport1, sport2):
         pass
-
-    
-
-COMPATIBILITY_MATRIX = CompatibilityMatrix()
-
-
-COMPATIBILITY_MATRIX.positive_feedback(SPORTS['escalade'], SPORTS['cyclisme'])
