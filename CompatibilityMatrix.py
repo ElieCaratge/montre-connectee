@@ -4,6 +4,7 @@ import csv
 from Sport import SPORTS_LIST, SPORTS
 from Patient import Patient
 
+
 class CompatibilityMatrix(pd.DataFrame):
 
     def __init__(self) -> None:
@@ -51,28 +52,20 @@ class CompatibilityMatrix(pd.DataFrame):
         super().__init__(B)
 
     def positive_feedback(self, sport1, sport2):
+        '''Si la recommandation est bonne : amélioration de l'affinité (+0.25 si l'affinité était nulle, +0 si elle était de 1)'''
+        '''sport1 = Patient.main_sport'''
         i = SPORTS_LIST.index(sport1)
         j = SPORTS_LIST.index(sport2)
-        self.iloc[i,j] += (25/10)*np.sqrt(100-self.iloc[i,j])
+        self.iloc[i, j] += (25/10)*np.sqrt(100-self.iloc[i, j])
 
     def negative_feedback(self, sport1, sport2):
+        '''Si la recommandation est bonne : diminution de l'affinité (-0.25 si l'affinité était de 1, -0 si elle était nulle)'''
         i = SPORTS_LIST.index(sport1)
         j = SPORTS_LIST.index(sport2)
-        self.iloc[i,j] += (25/10)*np.sqrt(self.iloc[i,j])
+        self.iloc[i, j] += (25/10)*np.sqrt(self.iloc[i, j])
 
-    def compute_intensity(sport,sportivity = Patient.category) :
-        '''Sportivity : Beginner = 600 MET.min/semaine / Intermediate = 1500 MET.min/semaine / Expert = 3000 MET.min/semaine'''
-        '''On suppose en moyenne 3j sport/semaine'''
-        '''sport : int'''
-        if Patient.category == "beginner" :
-            sportivity = 200
-        elif Patient.category == "intermediate" :
-            sportivity = 500
-        else :
-            sportivity = 1000
-        delta_t = sportivity/SPORTS_LIST[sport].MET
-        return delta_t
     
+
 
 COMPATIBILITY_MATRIX = CompatibilityMatrix()
 
