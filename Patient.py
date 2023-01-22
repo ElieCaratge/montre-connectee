@@ -1,8 +1,9 @@
 import numpy as np
 import datetime
-from Sport import SPORTS_LIST, N_SPORTS
+from Sport import SPORTS_LIST, N_SPORTS, Sport
 from CompatibilityMatrix import CompatibilityMatrix
 from attribution_sport import fct_principale
+
 
 class Patient:
 
@@ -12,7 +13,7 @@ class Patient:
     @classmethod
     def generate_random_patient(cls, freq=3, nb_seances=8, min_min=30, min_max=60):
         """Générer un patient aléatoire.
-        
+
         Paramètres
         ----------
         - freq (int) : Nombre de jours espacant chaque pratique sportive.
@@ -26,12 +27,12 @@ class Patient:
         practice = [
             (SPORTS_LIST[np.random.randint(N_SPORTS)], today-datetime.timedelta(freq*i), datetime.timedelta(minutes=np.random.randint(min_min, min_max))) for i in range(nb_seances)
         ]
-        
+
         return Patient(BPM, practice)
 
-    def __init__(self, BPM, practice, liked_sports = dict()) -> None:
+    def __init__(self, BPM, practice, liked_sports=dict()) -> None:
         """Initialisation d'un patient.
-        
+
         Paramètres
         ----------
         - BPM (np.array) : Rythme cardiaque du patient.
@@ -47,10 +48,11 @@ class Patient:
             else "intermediate" if self.evaluation < Patient.EXPERT_THRESHOLD else "expert"
         self.compatibility_matrix = CompatibilityMatrix()
         self.next_recommendation = self.new_recommendations()
-
+        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=None)
+        
     def __repr__(self) -> str:
         return f"Patient({self.category})"
-    
+
     def evaluate(self):
         """Évaluation de l'activité sportive du patient (note sur 10)"""
 
@@ -65,7 +67,7 @@ class Patient:
     def process_activity(self):
         """Nombre d'heures équivalentes de sport par semaine."""
 
-        sum=datetime.timedelta()
+        sum = datetime.timedelta()
         first_activity = self.practice[0][1]
 
         for sport, date, duration in self.practice:
@@ -79,7 +81,7 @@ class Patient:
         """Rythme cardiaque moyen"""
 
         return np.mean(self.BPM)
-    
+
     def find_main_sport(self):
         """Sport principal du patient."""
 
@@ -90,12 +92,41 @@ class Patient:
             practiced_sports[SPORTS_LIST.index(sport)] += 1
         # Trouver le sport le plus pratiqué
         return SPORTS_LIST[np.argmax(practiced_sports)]
+    
+    def hard_intensity_feedback(self):
+        category = self.recomendation[2]
+        if category == "expert":
+            new_category = "intermediate"
+        else:
+            new_category = "beginner"
+        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=new_category)
+
+    def easy_intensity_feedback(self):
+        category = self.recomendation[2]
+        if category == "beginner":
+            new_category = "intermediate"
+        else:
+            new_category = "expert"
+        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=new_category)
+
+    def do_sport(self):
+        """Appelé quand le patient fait un sport"""
+        sport, intensity, category = self.recomendation
+        # Ajout de la pratique à l'historique
+        self.practice.append((sport, datetime.datetime.now(), intensity))
+        # Mise à jour de la condition physique du patient
+        self.category = self.evaluate()
+        # Mise à jour des coefficients de recommendation
+        self.compatibility_matrix.positive_feedback(self.main_sport, sport)
+        # Mise à jour du sport principal
+        self.main_sport = self.find_main_sport()
+        # Nouvelles recommendations
+        self.next_recommendation = self.new_recommendations()
 
     def new_recommendations(self):
         """Génère une liste de recommandations pour le patient."""
-        
-        return fct_principale(self.compatibility_matrix.to_numpy(), SPORTS_LIST.index(self.main_sport))
 
+        return fct_principale(self.compatibility_matrix.to_numpy(), SPORTS_LIST.index(self.main_sport))
 
 
 myPatient = Patient.generate_random_patient()

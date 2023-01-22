@@ -12,6 +12,29 @@ class Sport:
 
     def equiv_hours(self, timedelta:datetime.timedelta)->datetime.timedelta:
         return self.MET/18*timedelta
+    
+    def compute_intensity(self, category):
+        '''Sportivity : Beginner = 600 MET.min/semaine / Intermediate = 1500 MET.min/semaine / Expert = 3000 MET.min/semaine
+        On suppose en moyenne 3j sport/semaine'''
+        if category == "beginner":
+            sportivity = 200
+        elif category == "intermediate":
+            sportivity = 500
+        else:
+            sportivity = 1000
+        delta_t = sportivity/self.MET
+        return delta_t
+
+    @classmethod
+    def new_recomendation(cls, i, patient, intensity=None):
+        sport = SPORTS_LIST[i]
+        if intensity != None:
+            advised_intensity = sport.compute_intensity(intensity)
+            category = intensity
+        else :
+            advised_intensity = sport.compute_intensity(patient.category)
+            category = patient.category
+        return (sport, advised_intensity, category)
 
 
 SPORTS = {
