@@ -1,5 +1,4 @@
 from tkinter import *
-from functions import *
 from tkinter import ttk
 from datetime import *
 
@@ -20,8 +19,8 @@ Our_recom = Label(left_frame,text='Notre recommandation :',font=('Arial',30))
 Our_recom.pack(pady=10)
 
 #Sport et durée arbitraires
-sport = ['Cyclisme','Tennis','Danse', 'Course à pied', 'Boxe']
-time = [90,60,45,40,80]
+sport = ['Cyclisme','Course à pied', 'Tennis', 'Renforcement musculaire']
+time = [90,40,60,30]
 
 #commande pour vider la frame de gauche
 def clear_frame():
