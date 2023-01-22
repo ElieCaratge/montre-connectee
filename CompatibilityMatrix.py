@@ -10,7 +10,7 @@ class CompatibilityMatrix(pd.DataFrame):
         reponses = []
 
         # Read the csv file, mine is called reponses.csv
-        with open('./Data/Questionnaire.csv', newline='') as csvfile:
+        with open('./Data/Questionnaire.csv', newline='', encoding='utf-8') as csvfile:
             reponse = csv.reader(csvfile)
             for row in reponse:
                 # row[0] is a row with the date, we don't need it

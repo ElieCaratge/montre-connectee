@@ -34,7 +34,7 @@ def modification_liste_sports(array_probas, sport_choisi, rang_sport_choisi, lis
         proba_enlevee = array_probas[rang_sport_choisi] - array_probas[rang_sport_choisi-1]
     for i in range(rang_sport_choisi, len(array_probas)):
         array_probas[i] = array_probas[i] - proba_enlevee
-    np.delete(array_probas, rang_sport_choisi)
+    array_probas = np.delete(array_probas, [rang_sport_choisi])
     "On renormalise la plage de valeurs"
     array_probas = array_probas/(1-proba_enlevee)
     return(array_probas, sports_deja_choisis, liste_sports_restants)
@@ -53,7 +53,6 @@ def fct_principale(matrice_sports, sport_initial):
             array_probas, sport_choisi, rang_sport_choisi, liste_sports_restants, sports_deja_choisis)
         (rang_sport_choisi, sport_choisi) = attribution_sport(
             array_probas, liste_sports_restants)
-        print(sports_deja_choisis, liste_sports_restants)
     sports_deja_choisis.append(sport_choisi)
     return(sports_deja_choisis)
 
