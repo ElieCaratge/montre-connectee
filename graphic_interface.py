@@ -85,20 +85,20 @@ time_recom.pack(pady=10)
 
 
 #Bouton c'est très bien
-ok_button = Button(right_frame,text = "C'est très bien", font=('Arial',30),width=20, command=its_ok)
+ok_button = Button(right_frame,text = "C'est très bien", font=('Arial',30),width=20, command=its_ok, activeforeground='#727CF4')
 ok_button.pack(pady = 15, padx= 40)
 
 #bouton changer
-change_button = Button(right_frame,text = 'Changer de sport', font=('Arial',30),width=20,command=change_sport)
+change_button = Button(right_frame,text = 'Changer de sport', font=('Arial',30),width=20,command=change_sport,activeforeground='#727CF4')
 change_button.pack(pady = 15, padx= 40)
 
 #bouton Trop long
-long_button = Button(right_frame,text = "C'est trop long", font=('Arial',30),width=20,command=too_long)
+long_button = Button(right_frame,text = "C'est trop long", font=('Arial',30),width=20,command=too_long,activeforeground='#727CF4')
 long_button.pack(pady = 15, padx= 40)
 
 
 #Bouton trop court 
-short_button = Button(right_frame,text = "C'est trop court", font=('Arial',30),width=20,command=too_short)
+short_button = Button(right_frame,text = "C'est trop court", font=('Arial',30),width=20,command=too_short,activeforeground='#727CF4')
 short_button.pack(pady = 15, padx= 40)
 
 
