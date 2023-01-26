@@ -61,23 +61,20 @@ class CompatibilityMatrix(pd.DataFrame):
         '''Si la recommandation est bonne : diminution de l'affinité (-0.25 si l'affinité était de 1, -0 si elle était nulle)'''
         i = SPORTS_LIST.index(sport1)
         j = SPORTS_LIST.index(sport2)
-        self.iloc[i, j] += (25/10)*np.sqrt(self.iloc[i, j])
-    
-    def compute_intensity(sport, sportivity=patient.category):
-        '''Sportivity : Beginner = 600 MET.min/semaine / Intermediate = 1500 MET.min/semaine / Expert = 3000 MET.min/semaine'''
-        '''On suppose en moyenne 3j sport/semaine'''
-        '''sport : int'''
-        if Patient.category == "beginner":
-            sportivity = 200
-        elif Patient.category == "intermediate":
-            sportivity = 500
-        else:
-            sportivity = 1000
-        delta_t = sportivity/SPORTS_LIST[sport].MET
-        return delta_t
+        self.iloc[i, j] -= (25/10)*np.sqrt(self.iloc[i, j])
 
 
 COMPATIBILITY_MATRIX = CompatibilityMatrix()
 
 
 COMPATIBILITY_MATRIX.positive_feedback(SPORTS['escalade'], SPORTS['cyclisme'])
+
+# Test
+if __name__ == "__main__":
+    print(COMPATIBILITY_MATRIX)
+    # Test positive feedback
+    COMPATIBILITY_MATRIX.positive_feedback(SPORTS_LIST[0], SPORTS_LIST[1])
+    print(COMPATIBILITY_MATRIX)
+    # Test negative feedback
+    COMPATIBILITY_MATRIX.negative_feedback(SPORTS_LIST[3], SPORTS_LIST[4])
+    print(COMPATIBILITY_MATRIX)

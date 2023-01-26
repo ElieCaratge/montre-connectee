@@ -11,6 +11,11 @@ class Patient:
     EXPERT_THRESHOLD = 7
 
     @classmethod
+    def classify(cls, evaluation):
+        return "beginner" if evaluation < Patient.NOOB_THRESHOLD \
+            else "intermediate" if evaluation < Patient.EXPERT_THRESHOLD else "expert"
+
+    @classmethod
     def generate_random_patient(cls, freq=3, nb_seances=8, min_min=30, min_max=60):
         """Générer un patient aléatoire.
 
@@ -22,7 +27,7 @@ class Patient:
         - min_max (int) : Durée maximale d'une séance de sport.
         """
 
-        today = datetime.date.today()
+        today = datetime.datetime.now()
         BPM = np.random.normal(70, 7, size=50)
         practice = [
             (SPORTS_LIST[np.random.randint(N_SPORTS)], today-datetime.timedelta(freq*i), datetime.timedelta(minutes=np.random.randint(min_min, min_max))) for i in range(nb_seances)
@@ -44,14 +49,13 @@ class Patient:
         self.practice = practice
         self.main_sport = self.find_main_sport()
         self.evaluation = self.evaluate()
-        self.category = "beginner" if self.evaluation < Patient.NOOB_THRESHOLD \
-            else "intermediate" if self.evaluation < Patient.EXPERT_THRESHOLD else "expert"
+        self.category = Patient.classify(self.evaluation)
         self.compatibility_matrix = CompatibilityMatrix()
-        self.next_recommendation = self.new_recommendations()
-        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=None)
+        self.next_recomendation = self.new_recomendations()
+        self.recomendation = Sport.new_recomendation(self.next_recomendation[0], self, intensity=None)
         
     def __repr__(self) -> str:
-        return f"Patient({self.category})"
+        return f"Patient({self.main_sport}, {self.category})"
 
     def evaluate(self):
         """Évaluation de l'activité sportive du patient (note sur 10)"""
@@ -75,7 +79,7 @@ class Patient:
             if date < first_activity:
                 first_activity = date
 
-        return (sum/(datetime.date.today()-first_activity).days*7).total_seconds()/3600
+        return (sum/(datetime.datetime.now()-first_activity).days*7).total_seconds()/3600
 
     def process_BPM(self):
         """Rythme cardiaque moyen"""
@@ -99,7 +103,7 @@ class Patient:
             new_category = "intermediate"
         else:
             new_category = "beginner"
-        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=new_category)
+        self.recomendation = Sport.new_recomendation(self.next_recomendation[0], self, intensity=new_category)
 
     def easy_intensity_feedback(self):
         category = self.recomendation[2]
@@ -107,27 +111,51 @@ class Patient:
             new_category = "intermediate"
         else:
             new_category = "expert"
-        self.recomendation = Sport.new_recommendation(self.new_recommendations[0], self, intensity=new_category)
+        self.recomendation = Sport.new_recomendation(self.next_recomendation[0], self, intensity=new_category)
 
     def do_sport(self):
-        """Appelé quand le patient fait un sport"""
+        """Appelé quand le patient fait un sport."""
         sport, intensity, category = self.recomendation
         # Ajout de la pratique à l'historique
-        self.practice.append((sport, datetime.datetime.now(), intensity))
+        self.practice.append((sport, datetime.datetime.now(), datetime.timedelta(minutes=intensity)))
         # Mise à jour de la condition physique du patient
-        self.category = self.evaluate()
-        # Mise à jour des coefficients de recommendation
+        self.category = Patient.classify(self.evaluate())
+        # Mise à jour des coefficients de recomendation
         self.compatibility_matrix.positive_feedback(self.main_sport, sport)
         # Mise à jour du sport principal
         self.main_sport = self.find_main_sport()
-        # Nouvelles recommendations
-        self.next_recommendation = self.new_recommendations()
+        # Nouvelles recomendations
+        self.next_recomendation = self.new_recomendations()
+        self.recomendation = Sport.new_recomendation(self.next_recomendation[0], self, intensity=None)
+    
+    def do_not_sport(self):
+        """Appelé quand le patient refuse une recomendation."""
+        sport, intensity, category = self.recomendation
+        # Mise à jour des coefficients de recomendation
+        self.compatibility_matrix.negative_feedback(self.main_sport, sport)
+        # Nouvelles recomendations
+        if len(self.next_recomendation) <= 1:
+            self.next_recomendation = self.new_recomendations()
+        else:
+            self.next_recomendation = self.next_recomendation[1:]
+        self.recomendation = Sport.new_recomendation(self.next_recomendation[0], self, intensity=None)
 
-    def new_recommendations(self):
+    def new_recomendations(self):
         """Génère une liste de recommandations pour le patient."""
 
         return fct_principale(self.compatibility_matrix.to_numpy(), SPORTS_LIST.index(self.main_sport))
 
+# Test
+if __name__ == "__main__":
+    myPatient = Patient.generate_random_patient()
+    print(myPatient)
 
-myPatient = Patient.generate_random_patient()
-print(myPatient.next_recommendation)
+    print(myPatient.compatibility_matrix)
+    print(myPatient.recomendation)
+    # Test de la méthode do_not_sport
+    myPatient.do_not_sport()
+    print(myPatient.recomendation)
+    # Test de la méthode do_sport
+    myPatient.do_sport()
+    print(myPatient.recomendation)
+    print(myPatient.compatibility_matrix)
